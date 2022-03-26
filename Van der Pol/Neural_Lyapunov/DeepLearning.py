@@ -44,7 +44,7 @@ model = koopmanAE(state_space_dim, koopman_dim, STEPS, STEPS_BACK, 1)
 print('koopmanAE')
 device = torch.device('cpu')
 model = model.to(device)
-model.load_state_dict(torch.load('./model_last_b.pkl',map_location=torch.device('cpu')))
+model.load_state_dict(torch.load('./saved/trained_model.pkl',map_location=torch.device('cpu')))
 model.eval()
 
 #******************************************************************************
@@ -153,7 +153,8 @@ def V_basis(X,v):
     ret = real(ret*(ret.conj()))
     return ret
     
-limit_cycle = np.load('limit_cycle.npy')
+
+limit_cycle = np.load('./saved/limit_cycle.npy') ## <-- For the purposes of sampling near the limit cycle.
 
 
 ##############################
@@ -441,46 +442,3 @@ for i,traj in enumerate(V_trajs):
 plt.title("1000 randomly sampled trajectories \n starting inside the $\gamma$-sublevel set")
 plt.plot(gamma*np.ones(traj.shape),'k--')
 plt.show()
-
-######################################
-""" FIND COUNTER EXAMPLE OPTIMALLY """
-######################################
-
-mo = sympy.Matrix(monomials)
-P_real = real(P)
-P_imag = imag(P)
-E = np.matmul(P_real.T,mo)**2 + np.matmul(P_imag.T,mo)**2
-Candidate = sympy.Matrix(np.matmul(alpha,E) - gamma) 
-Jac = Candidate.jacobian([x,y])
-Hess = sympy.hessian(Candidate, [x,y])
-
-f = sympy.Matrix([y,    -x + y - (x**2)*y])
-Candidate_dot = sympy.Matrix(np.matmul(Jac,f)) + beta*Candidate
-
-obj_fun_ = lambdify((x,y),Candidate_dot,"numpy")
-obj_fun = lambda X : -obj_fun_(X[0],X[1])[0]
-obj_jac_ = lambdify((x,y),Candidate_dot.jacobian([x,y]),"numpy")
-obj_jac = lambda X : -obj_jac_(X[0],X[1])[0]
-obj_hess_ = lambdify((x,y),sympy.hessian(Candidate_dot, [x,y]),"numpy")
-obj_hess = lambda X: -obj_hess_(X[0],X[1])
-
-con_fun_ = lambdify((x,y), Candidate, "numpy")
-con_fun = lambda X : con_fun_(X[0],X[1])[0]
-con_jac_ = lambdify((x,y),Jac,"numpy")
-con_jac = lambda X : con_jac_(X[0],X[1])[0]
-con_hess_ = lambdify((x,y),Hess,"numpy")
-con_hess = lambda X,V : V[0]*con_hess_(X[0],X[1])
-
-
-from scipy.optimize import NonlinearConstraint
-from scipy.optimize import minimize
-from scipy.optimize import Bounds
-
-bounds = Bounds([-3, -3], [3, 3])
-nonlinear_constraint = NonlinearConstraint(con_fun, -np.inf, 0, jac=con_jac, hess=con_hess)
-x0 = np.array([1, 0])
-res = minimize(obj_fun, x0, method='trust-constr', jac=obj_jac, hess=obj_hess,
-               constraints=[nonlinear_constraint],
-               options={'xtol': 1e-10, 'gtol': 1e-10, 'verbose': 1}, bounds=bounds)
-
-# Negative res.fun means successfully found a Lyapunov function with no bad violation

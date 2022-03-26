@@ -36,7 +36,7 @@ class Params:
     parameters (K), and antibiotic efficacies (eps)  associated with a gLV
     system. If no input file is provided, the default parameters from Stein et
     al. are used. rho and eps are Nx1, K is NxN. """
-    def __init__(s, my_params=None, filename='stein_parameters.csv'):
+    def __init__(s, my_params=None, filename='./data/stein_parameters.csv'):
         # use your own gLV parameters, if desired
         if my_params:
             s.labels, s.rho, s.K = my_params
@@ -45,7 +45,7 @@ class Params:
             # import "messy" variables and initial conditions from .csv files
             with open(filename, 'r') as f:
                 var_data = [line.strip().split(",") for line in f][1:]
-            with open('stein_ic.csv','r') as f:
+            with open('./data/stein_ic.csv','r') as f:
                 ic_data = [line.strip().split(",") for line in f]
 
             # turn "messy" data and ICs into variables
