@@ -96,7 +96,7 @@ Xtr = X.copy()
 Ytr = Y.copy()
 
 
-while(Xtr.shape[0]>200):
+while(Xtr.shape[0]>10):
     A = np.matmul(Ytr,np.linalg.pinv(Xtr)) # Can actually do this one data point at a time, useful for realitime update
     mu,phi = eig(A.T)
     res_eig = np.abs(np.matmul(phi.T,Ytr - np.matmul(A,Xtr)))
