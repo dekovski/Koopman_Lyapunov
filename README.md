@@ -1,6 +1,5 @@
 # Koopman-based Neural Lyapunov functions for general attractors
-Code for CDC2022 submission.
-Complete code upload and description currently under progress. Kindly email me at deka.shankar@berkeley.edu thanks!
+Code for CDC2022 submission. Kindly email me at deka.shankar@berkeley.edu for complete code or questions. Thanks!
 
 For full proofs, please see the preprint of the paper below.
 
