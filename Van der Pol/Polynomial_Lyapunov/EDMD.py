@@ -64,7 +64,7 @@ def V_basis(X,v):
     
 
 deg = 6
-limit_cycle = np.load('./saved/limit_cycle.npy')
+limit_cycle = np.load('./saved/limit_cycle.npy') ## <-- For the purposes of sampling near the limit cycle.
 
 x, y = sympy.symbols('x y', real=True)
 monomials = sorted(itermonomials([x, y], deg), key=monomial_key('grlex', [y, x]))
