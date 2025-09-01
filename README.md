@@ -7,4 +7,4 @@ Link to paper: https://arxiv.org/pdf/2203.12303.pdf
 
 # Dependencies
 1. Final parts of the Python code utilize the Polytope package: https://pypi.org/project/polytope/
-2. Matlab code uses Yalmip for SOS: https://yalmip.github.io/command/solvesos/
+2. Matlab code uses Yalmip for SOS: https://yalmip.github.io/command/solvesos/. SDP solver is MOSEK: https://www.mosek.com/.
